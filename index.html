@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bankai Shop - فروش اکانت فورتنایت</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* استایل های کلی و انیمیشن ها */
+        @font-face {
+            font-family: 'IranSans';
+            src: url('fonts/IRANSansWeb.ttf') format('truetype');
+        }
+        
+        :root {
+            --primary: #6a11cb;
+            --secondary: #2575fc;
+            --accent: #ff4d4d;
+            --dark: #1a1a2e;
+            --light: #f8f9fa;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'IranSans', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--dark), #16213e);
+            color: var(--light);
+            min-height: 100vh;
+        }
+        
+        /* انیمیشن ها */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        /* بقیه استایل ها... */
+    </style>
+</head>
+<body>
+    <!-- نوار بار بالا -->
+    <header class="header">
+        <div class="logo-container">
+            <img src="logo.png" alt="Bankai Shop" class="logo">
+            <h1>Bankai Shop</h1>
+        </div>
+        <nav class="nav">
+            <ul>
+                <li><a href="#home" class="nav-link">صفحه اصلی</a></li>
+                <li><a href="#accounts" class="nav-link">اکانت ها</a></li>
+                <li><a href="#about" class="nav-link">درباره ما</a></li>
+                <li><a href="#contact" class="nav-link">تماس با ما</a></li>
+            </ul>
+        </nav>
+        <div class="user-actions">
+            <button class="btn login-btn">ورود ادمین</button>
+        </div>
+    </header>
+
+    <!-- بخش اصلی -->
+    <main>
+        <!-- بخش هیرو -->
+        <section id="home" class="hero">
+            <div class="hero-content">
+                <h2>به Bankai Shop خوش آمدید</h2>
+                <p>مرجع خرید و فروش معتبرترین اکانت های فورتنایت با پشتیبانی 24 ساعته</p>
+                <div class="hero-buttons">
+                    <button class="btn primary-btn pulse-animation">مشاهده اکانت ها</button>
+                    <button class="btn secondary-btn">راهنمای خرید</button>
+                </div>
+            </div>
+            <div class="hero-image">
+                <img src="fortnite-hero.png" alt="Fortnite Characters">
+            </div>
+        </section>
+
+        <!-- بخش اکانت ها -->
+        <section id="accounts" class="accounts-section">
+            <h2 class="section-title">اکانت های موجود</h2>
+            <div class="filter-controls">
+                <div class="filter-group">
+                    <label for="price-filter">فیلتر براساس قیمت:</label>
+                    <select id="price-filter" class="filter-select">
+                        <option value="all">همه</option>
+                        <option value="0-50">تا 50 هزار تومان</option>
+                        <option value="50-100">50 تا 100 هزار تومان</option>
+                        <option value="100-200">100 تا 200 هزار تومان</option>
+                        <option value="200+">بالای 200 هزار تومان</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="skin-filter">فیلتر براساس اسکین:</label>
+                    <select id="skin-filter" class="filter-select">
+                        <option value="all">همه</option>
+                        <option value="rare">نایاب</option>
+                        <option value="legendary">افسانه ای</option>
+                        <option value="exclusive">انحصاری</option>
+                    </select>
+                </div>
+                <button class="btn filter-btn">اعمال فیلتر</button>
+                <button class="btn reset-btn">بازنشانی</button>
+            </div>
+
+            <div class="accounts-grid" id="accounts-container">
+                <!-- اکانت ها به صورت داینامیک با JS لود میشوند -->
+            </div>
+
+            <!-- پنل ادمین (مخفی است تا زمانی که ادمین وارد شود) -->
+            <div class="admin-panel" id="admin-panel" style="display: none;">
+                <h3>پنل مدیریت اکانت ها</h3>
+                <div class="admin-controls">
+                    <button class="btn admin-btn" id="add-account-btn">افزودن اکانت جدید</button>
+                    <button class="btn admin-btn" id="edit-account-btn">ویرایش اکانت</button>
+                    <button class="btn admin-btn" id="mark-sold-btn">علامت گذاری به عنوان فروخته شده</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- مودال ها -->
+        <div class="modal" id="login-modal">
+            <div class="modal-content">
+                <span class="close-modal">&times;</span>
+                <h3>ورود به پنل مدیریت</h3>
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="username">نام کاربری:</label>
+                        <input type="text" id="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">رمز عبور:</label>
+                        <input type="password" id="password" required>
+                    </div>
+                    <button type="submit" class="btn primary-btn">ورود</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="modal" id="add-account-modal">
+            <div class="modal-content">
+                <span class="close-modal">&times;</span>
+                <h3>افزودن اکانت جدید</h3>
+                <form id="add-account-form">
+                    <div class="form-group">
+                        <label for="account-name">نام اکانت:</label>
+                        <input type="text" id="account-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="account-price">قیمت (تومان):</label>
+                        <input type="number" id="account-price" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="account-skins">اسکین های موجود:</label>
+                        <textarea id="account-skins" rows="3" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="account-level">سطح اکانت:</label>
+                        <input type="number" id="account-level" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="account-image">آدرس تصویر:</label>
+                        <input type="text" id="account-image" required>
+                    </div>
+                    <button type="submit" class="btn primary-btn">ذخیره اکانت</button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <!-- فوتر -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Bankai Shop</h4>
+                <p>معتبرترین فروشگاه اکانت فورتنایت در ایران با بیش از 5 سال سابقه درخشان</p>
+            </div>
+            <div class="footer-section">
+                <h4>لینک های مفید</h4>
+                <ul>
+                    <li><a href="#">قوانین و مقررات</a></li>
+                    <li><a href="#">سوالات متداول</a></li>
+                    <li><a href="#">راهنمای خرید</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>تماس با ما</h4>
+                <ul>
+                    <li><i class="fas fa-phone"></i> 09123456789</li>
+                    <li><i class="fas fa-envelope"></i> info@bankai-shop.ir</li>
+                    <li><i class="fab fa-telegram"></i> t.me/bankaishop</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>تمامی حقوق برای Bankai Shop محفوظ است © 1402</p>
+        </div>
+    </footer>
+
+    <script>
+        // اسکریپت های جاوااسکریپت برای عملکردهای سایت
+        document.addEventListener('DOMContentLoaded', function() {
+            // متغیرهای جهانی
+            let accounts = [
+                {
+                    id: 1,
+                    name: "اکانت افسانه ای فصل 2",
+                    price: 250000,
+                    skins: ["Renegade Raider", "Black Knight", "Aerial Assault Trooper"],
+                    level: 350,
+                    image: "account1.jpg",
+                    sold: false
+                },
+                {
+                    id: 2,
+                    name: "اکانت نایاب فصل 3",
+                    price: 180000,
+                    skins: ["Skull Trooper", "Ghoul Trooper", "Recon Expert"],
+                    level: 280,
+                    image: "account2.jpg",
+                    sold: false
+                },
+                {
+                    id: 3,
+                    name: "اکانت VIP فصل 5",
+                    price: 320000,
+                    skins: ["Galaxy", "Ikonic", "Honor Guard"],
+                    level: 420,
+                    image: "account3.jpg",
+                    sold: true
+                }
+            ];
+            
+            let isAdmin = false;
+            
+            // لود اکانت ها
+            function loadAccounts() {
+                const container = document.getElementById('accounts-container');
+                container.innerHTML = '';
+                
+                accounts.forEach(account => {
+                    const accountCard = document.createElement('div');
+                    accountCard.className = `account-card ${account.sold ? 'sold' : ''}`;
+                    accountCard.dataset.id = account.id;
+                    
+                    accountCard.innerHTML = `
+                        <div class="account-image">
+                            <img src="${account.image}" alt="${account.name}">
+                            ${account.sold ? '<div class="sold-badge">فروخته شد</div>' : ''}
+                        </div>
+                        <div class="account-details">
+                            <h3>${account.name}</h3>
+                            <p class="account-skins"><strong>اسکین ها:</strong> ${account.skins.join(', ')}</p>
+                            <p class="account-level"><strong>سطح:</strong> ${account.level}</p>
+                            <div class="account-footer">
+                                <span class="account-price">${account.price.toLocaleString()} تومان</span>
+                                ${!account.sold ? '<button class="btn buy-btn">خرید اکانت</button>' : ''}
+                            </div>
+                        </div>
+                    `;
+                    
+                    container.appendChild(accountCard);
+                });
+            }
+            
+            // مدیریت ورود ادمین
+            document.getElementById('login-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+                
+                // در حالت واقعی این اطلاعات باید از سرور چک شوند
+                if (username === 'admin' && password === 'bankai123') {
+                    isAdmin = true;
+                    document.getElementById('admin-panel').style.display = 'block';
+                    closeModal('login-modal');
+                    alert('با موفقیت وارد شدید!');
+                } else {
+                    alert('نام کاربری یا رمز عبور اشتباه است!');
+                }
+            });
+            
+            // افزودن اکانت جدید
+            document.getElementById('add-account-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const newAccount = {
+                    id: accounts.length + 1,
+                    name: document.getElementById('account-name').value,
+                    price: parseInt(document.getElementById('account-price').value),
+                    skins: document.getElementById('account-skins').value.split(',').map(s => s.trim()),
+                    level: parseInt(document.getElementById('account-level').value),
+                    image: document.getElementById('account-image').value,
+                    sold: false
+                };
+                
+                accounts.push(newAccount);
+                loadAccounts();
+                closeModal('add-account-modal');
+                alert('اکانت جدید با موفقیت اضافه شد!');
+            });
+            
+            // باز کردن مودال ها
+            document.querySelector('.login-btn').addEventListener('click', () => openModal('login-modal'));
+            document.getElementById('add-account-btn').addEventListener('click', () => openModal('add-account-modal'));
+            
+            // بستن مودال ها
+            document.querySelectorAll('.close-modal').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const modal = this.closest('.modal');
+                    modal.style.display = 'none';
+                });
+            });
+            
+            // توابع کمکی
+            function openModal(id) {
+                document.getElementById(id).style.display = 'block';
+            }
+            
+            function closeModal(id) {
+                document.getElementById(id).style.display = 'none';
+            }
+            
+            // لود اولیه اکانت ها
+            loadAccounts();
+        });
+    </script>
+</body>
+</html>
